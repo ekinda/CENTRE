@@ -80,6 +80,9 @@ computeGenericFeatures <- function(x) {
 
   RSQLite::dbDisconnect(conn)
 
+  cat(paste0('SQL steps done. time: ', format(Sys.time() - start_time), "\n"))
+  start_time <- Sys.time()
+
   cageWilcoxTest <- cageDf[featuresDistances$pair, 1]
   dhsexpWilcoxTest <- dhsexpDf[featuresDistances$pair, 1]
   crupexpWilcoxTest <- crupexpDf[featuresDistances$pair, 1]
@@ -92,6 +95,8 @@ computeGenericFeatures <- function(x) {
   ## Combining the values of the Wilcoxon tests
   combined_tests <- metapod::combineParallelPValues(pValue, method="fisher")
 
+  cat(paste0('Metapod p value combination done. time: ', format(Sys.time() - start_time), "\n"))
+  start_time <- Sys.time()
 
   featuresDistances$combined_tests <- -log(combined_tests$p.value)
   featuresDistances$crup_cor <- crupCor
@@ -102,7 +107,7 @@ computeGenericFeatures <- function(x) {
                                          "combined_tests")]
 
   featuresGeneric[is.na(featuresGeneric)] <- 0
-  cat(paste0('time: ', format(Sys.time() - start_time), "\n"))
+  cat(paste0('Generic features complete. time: ', format(Sys.time() - start_time), "\n"))
   return(featuresGeneric)
 
 }
