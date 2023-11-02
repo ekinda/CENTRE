@@ -364,9 +364,18 @@ get_rnaseq <- function(x, tpmfile) {
   start_time <- Sys.time()
   tpmfile$gene_id2 <- gsub("\\..*", "", tpmfile[, 1])
   cat(paste0('get_rnaseq: gsub done. time: ', format(Sys.time() - start_time), "\n"))
+  
+  start_time <- Sys.time()
+  tpmfile$gene_id2 <- gsub("\\..*", "", tpmfile[, 1], perl=TRUE)
+  cat(paste0('get_rnaseq: gsub done with perl=TRUE. time: ', format(Sys.time() - start_time), "\n"))
+  
   start_time <- Sys.time()
   x <- merge(x, tpmfile[,c(3,4)],by.x = "gene_id2", by.y = "gene_id2" )
   cat(paste0('get_rnaseq: merge done. time: ', format(Sys.time() - start_time), "\n"))
+
+  start_time <- Sys.time()
+  x$tpm <- tpmfile[,3][match(x$gene_id2, tpmfile$gene_id2)]
+  cat(paste0('get_rnaseq: merging done with match method. time: ', format(Sys.time() - start_time), "\n"))
 
   return(x)
 }
